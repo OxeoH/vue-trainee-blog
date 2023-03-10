@@ -2,7 +2,7 @@
     <div class="app">
         <PostForm @create="createPost"/>
         <div class="line"></div>
-        <PostList :posts="posts"/>
+        <PostList :posts="posts" @delete="deletePost"/>
     </div>
 </template>
 
@@ -30,9 +30,11 @@
 
         methods: {
             createPost(post){
-                console.log(post);
                 this.posts.push(post)
-                console.log(this.posts);
+            },
+
+            deletePost(post){
+                this.posts = this.posts.filter(item => item.id !== post.id)
             }
         }
     }

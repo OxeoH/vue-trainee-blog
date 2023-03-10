@@ -1,22 +1,15 @@
 <template>
     <div class="blog">
-        <div class="post" v-for="post in posts">
-            <div class="title">
-                <strong>Title: </strong>
-                <br>
-                {{ post.title }}
-            </div>
-            <div class="description">
-                <strong>Description: </strong>
-                <br>
-                {{ post.description }}
-            </div>
-        </div>
+        <PostItem v-for="post in posts" :post="post" :key="post.id" @delete="$emit('delete', post)"/>
     </div>
 </template>
 
 <script>
+    import PostItem from './PostItem.vue';
     export default {
+        components:{
+            PostItem
+        },
         props:{
             posts:{
                 type: Array,
@@ -45,15 +38,7 @@
         grid-template: repeat(3, 1fr) / repeat(4, 1fr);
     }
 
-    .post{
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: left;
-        padding: 20px 40px;
-        border-radius: 2rem;
-        border: 2px peachpuff solid;
-    }
+    
 
     .title{
         font-size: 18px;

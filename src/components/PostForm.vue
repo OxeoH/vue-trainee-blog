@@ -1,22 +1,21 @@
 <template>
     <form class='form' @submit.prevent>
         <h2>Create post:</h2>
-        <input 
+        <MyInput 
             v-model="post.title"
-            class='input' 
             type="text" 
-            placeholder="Title">
-        <input 
+            placeholder="Title"/>
+        <MyInput 
             v-model="post.description" 
-            class='input' 
             type="text" 
-            placeholder="Description">
-        <button class="btn" @click="createPost">Add post</button>
+            placeholder="Description"/>
+        <MyButton class="button submit" @click="createPost">Add post</MyButton>
     </form>
 </template>
 
 <script>
     export default {
+
         data(){
             return{
                 post:{
@@ -43,15 +42,8 @@
         align-items: center;
     }
 
-    .input{
-        padding: 10px 30px 10px 20px;
-        font-size: 20px;
+    .submit{
         margin-top: 15px;
-    }
-
-    .btn{
         padding: 10px 16px;
-        background-color: azure;
-        margin-top: 15px;
     }
 </style>
