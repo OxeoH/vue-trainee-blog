@@ -6,8 +6,9 @@
         <my-dialog v-model:show="show" @show="hideDialog">
             <PostForm @create="createPost"/>
         </my-dialog>
-        <PostList :posts="posts" @delete="deletePost" v-show="posts.length"/>
-        <h2 v-show="!posts.length" style="text-align: center;">There are no posts yet</h2>
+        <h2 v-if="!posts.length && !isPostsLoading" style="text-align: center;">There are no posts yet</h2>
+        <PostList :posts="posts" @delete="deletePost" v-if="!isPostsLoading"/>
+        <h2 v-else style="text-align: center;">Posts are loading, wait please...</h2>
     </div>
 </template>
 
@@ -15,6 +16,8 @@
 <script>
     import PostList from './components/PostList.vue'
     import PostForm from './components/PostForm.vue'
+    import axios from 'axios'
+
 
     export default {
         components: {
@@ -25,7 +28,8 @@
         data(){
             return{
                 posts: [],
-                show: true
+                show: false,
+                isPostsLoading: true
             }
         },
 
@@ -41,7 +45,21 @@
             },
             showDialog(){
                 this.show = true
-            }
+            },
+            async fetchPosts(){
+                try{
+                    setTimeout(async () => {
+                        const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10')
+                        this.posts = response.data.map(post => post = {...post, description: post.body})
+                        this.isPostsLoading = false
+                    }, 1000)
+                }catch(e){
+                    console.log(e);
+                }
+            },
+        },
+        mounted(){
+            this.fetchPosts()
         }
     }
 </script>
