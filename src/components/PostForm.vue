@@ -1,15 +1,15 @@
 <template>
     <form class='form' @submit.prevent>
         <h2>Create post:</h2>
-        <MyInput 
+        <my-input 
             v-model="post.title"
             type="text" 
             placeholder="Title"/>
-        <MyInput 
+        <my-input 
             v-model="post.description" 
             type="text" 
             placeholder="Description"/>
-        <MyButton class="button submit" @click="createPost">Add post</MyButton>
+        <my-button class="button submit" @click="createPost">Add post</my-button>
     </form>
 </template>
 
@@ -40,6 +40,8 @@
         flex-direction: column;
         padding: 40px 20px;
         align-items: center;
+        background-color:cadetblue;
+        border-radius: 12px;
     }
 
     .submit{

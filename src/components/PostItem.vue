@@ -11,7 +11,12 @@
             {{ post.description }}
         </div>
         <div class="post__btns">
-            <MyButton class="post__btns-delete button" @click="deletePost">X</MyButton>
+            <my-button 
+                style='border-radius: 20px; padding: 6px 10px;' 
+                class="button post__btns-delete" 
+                @click="deletePost"
+                >X
+            </my-button>
         </div>
     </div>
 </template>
@@ -42,6 +47,7 @@
         border-radius: 2rem;
         border: 2px peachpuff solid;
         position: relative;
+        background-color:azure;
 
         &__btns{
             position: absolute;
@@ -52,6 +58,7 @@
             align-items: center;
             justify-content: center;
             &-delete{
+                border-radius: 20px;
                 padding: 6px 10px;
             }
         }

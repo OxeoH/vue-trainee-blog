@@ -4,7 +4,7 @@
 
 <script>
     export default {
-        name: 'MyInput',
+        name: 'my-input',
         props:{
             modelValue: [String, Number]
         },
@@ -21,5 +21,6 @@
         padding: 10px 30px 10px 20px;
         font-size: 20px;
         margin-top: 15px;
+        border-radius: 12px;
     }
 </style>

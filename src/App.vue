@@ -1,8 +1,13 @@
 <template>
     <div class="app">
-        <PostForm @create="createPost"/>
-        <div class="line"></div>
-        <PostList :posts="posts" @delete="deletePost"/>
+        <div class="wrapper">
+            <my-button @click="showDialog">Create post</my-button>
+        </div>
+        <my-dialog v-model:show="show" @show="hideDialog">
+            <PostForm @create="createPost"/>
+        </my-dialog>
+        <PostList :posts="posts" @delete="deletePost" v-show="posts.length"/>
+        <h2 v-show="!posts.length" style="text-align: center;">There are no posts yet</h2>
     </div>
 </template>
 
@@ -19,12 +24,8 @@
 
         data(){
             return{
-                posts: [
-                    {id: Date.now(), title: 'Post 1', description: 'Description of post 1'}, 
-                    {id: Date.now(), title: 'Post 2', description: 'Description of post 2'}, 
-                    {id: Date.now(), title: 'Post 3', description: 'Description of post 3'}, 
-                    {id: Date.now(), title: 'Post 4', description: 'Description of post 4'}, 
-                ]
+                posts: [],
+                show: true
             }
         },
 
@@ -32,9 +33,14 @@
             createPost(post){
                 this.posts.push(post)
             },
-
             deletePost(post){
                 this.posts = this.posts.filter(item => item.id !== post.id)
+            },
+            hideDialog(){
+                this.show = false
+            },
+            showDialog(){
+                this.show = true
             }
         }
     }
@@ -47,17 +53,15 @@
         height: 100vh;
 
     }
-
+    .wrapper{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
 
     .app{
         padding: 0 30px;
         margin: 0 auto;
-    }
-
-
-    
-    .line{
-        border: 4px solid #85FFBD;
-        border-radius: 20px;
     }
 </style>
