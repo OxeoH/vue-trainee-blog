@@ -39,10 +39,10 @@
 <style lang="scss" scoped>
     .blog{
         margin-top: 20px;
-        display: grid;
-        justify-items: center;
-        gap: 20px;
-        grid-template: repeat(3, 1fr) / repeat(4, 1fr);
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
     }
 
     .title{

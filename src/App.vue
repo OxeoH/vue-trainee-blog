@@ -11,7 +11,9 @@
         <h2 v-if="!posts.length && !isPostsLoading" style="text-align: center;">There are no posts yet</h2>
         <PostList :posts="sortedPosts" @delete="deletePost" v-if="!isPostsLoading"/>
         <h2 v-else style="text-align: center;">Posts are loading, wait please...</h2>
-        <div class="pagination__wrapper">
+
+        <div ref='observer' class="observer"></div>
+        <!-- <div class="pagination__wrapper">
             <div
                 class="page"
                 @click="changeCurrentPage(pageNum)"
@@ -23,7 +25,7 @@
             >
                 {{ pageNum }}
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -32,7 +34,6 @@
     import PostList from './components/PostList.vue'
     import PostForm from './components/PostForm.vue'
     import axios from 'axios'
-
 
     export default {
         components: {
@@ -82,17 +83,49 @@
                         this.posts = response.data.map(post => post = {...post, description: post.body})
                         this.isPostsLoading = false
                         this.totalPages = Math.ceil(response.headers['x-total-count'] / this.postsLimit)
-                    }, 300)
+                    }, 200)
                 }catch(e){
                     console.log(e);
                 }
             },
-            changeCurrentPage(pageNum){
-                this.page = pageNum
-            }
+
+            async loadMorePosts(){
+                setTimeout(async () => {
+                    try{
+                        this.page += 1
+                        const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+                            params: {
+                                _page: this.page,
+                                _limit: this.postsLimit
+                            }
+                        })
+                        this.posts = [...this.posts, ...response.data.map(post => post = {...post, description: post.body})]
+                    }catch(e){
+                        console.log(e);
+                    }
+                }, 200)
+            },
+            // changeCurrentPage(pageNum){
+            //     this.page = pageNum
+            // }
         },
         mounted(){
             this.fetchPosts()
+
+            const options ={
+                rootMargin: '0px',
+                threshold: 1.0
+            }
+
+            const callback = (entries, observer) =>{
+                if(entries[0].isIntersecting && this.page < this.totalPages){
+                    this.loadMorePosts()
+                }
+            }
+
+            const observer = new IntersectionObserver(callback, options)
+            observer.observe(this.$refs.observer)
+            
         },
         computed:{
             sortedPosts(){
@@ -110,11 +143,6 @@
         //         })
         //     }
         // }
-        watch:{
-            page(){
-                this.fetchPosts()
-            }
-        }
     }
 </script>
 
@@ -144,18 +172,20 @@
         justify-content: center;
         align-items: center;
     }
-    .page{
-        background-color: bisque;
-        border: 1px solid white;
-        border-radius: 1rem;
-        padding: 10px 14px;
-        margin-right: 10px;
-        &:hover{
-            transition: 0.2s ease 0s;
-            background-color: aquamarine;
-        }
-    }
-    .active-page{
-        background-color: aquamarine;
+    // .page{
+    //     background-color: bisque;
+    //     border: 1px solid white;
+    //     border-radius: 1rem;
+    //     padding: 10px 14px;
+    //     margin-right: 10px;
+    //     &:hover{
+    //         transition: 0.2s ease 0s;
+    //         background-color: aquamarine;
+    //     }
+    // }
+    // .active-page{
+    //     background-color: aquamarine;
+    // }
+    .observer{
     }
 </style>

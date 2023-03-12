@@ -48,6 +48,8 @@
         border: 2px peachpuff solid;
         position: relative;
         background-color:azure;
+        max-width: 300px;
+        margin-bottom: 20px;
 
         &__btns{
             position: absolute;
