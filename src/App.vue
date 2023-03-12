@@ -2,12 +2,13 @@
     <div class="app">
         <div class="wrapper">
             <my-button @click="showDialog">Create post</my-button>
+            <my-select v-model="selectedSort" :options="sortOptions"></my-select>
         </div>
         <my-dialog v-model:show="show" @show="hideDialog">
             <PostForm @create="createPost"/>
         </my-dialog>
         <h2 v-if="!posts.length && !isPostsLoading" style="text-align: center;">There are no posts yet</h2>
-        <PostList :posts="posts" @delete="deletePost" v-if="!isPostsLoading"/>
+        <PostList :posts="sortedPosts" @delete="deletePost" v-if="!isPostsLoading"/>
         <h2 v-else style="text-align: center;">Posts are loading, wait please...</h2>
     </div>
 </template>
@@ -29,7 +30,12 @@
             return{
                 posts: [],
                 show: false,
-                isPostsLoading: true
+                isPostsLoading: true,
+                selectedSort: '',
+                sortOptions: [
+                    { name: 'By title', value: 'title'},
+                    { name: 'By description', value: 'description'}
+                ]
             }
         },
 
@@ -60,7 +66,21 @@
         },
         mounted(){
             this.fetchPosts()
+        },
+        computed:{
+            sortedPosts(){
+                return [...this.posts].sort((post1, post2) => 
+                {return post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])})
+            }
         }
+        //Same sort by watch
+        // watch:{
+        //     selectedSort(newValue){
+        //         this.posts.sort((post1, post2) => {
+        //             return post1[newValue]?.localeCompare(post2[newValue])
+        //         })
+        //     }
+        // }
     }
 </script>
 
