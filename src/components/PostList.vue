@@ -7,7 +7,6 @@
                 :key="post.id" 
                 @delete="$emit('delete', post)"/>
         </transition-group>
-        
     </div>
 </template>
 
@@ -43,6 +42,12 @@
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: space-between;
+        align-items: center;
+    }
+    @media (max-width: 700px) {
+        .blog{
+            flex-direction: column;
+        }
     }
 
     .title{

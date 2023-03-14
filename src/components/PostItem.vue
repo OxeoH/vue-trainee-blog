@@ -1,5 +1,5 @@
 <template>
-    <div class="post">
+    <div class="post" @click.prevent="$router.push(`/blog/${post.id}`)">
         <div class="title">
             <strong>Title: </strong>
             <br>
@@ -11,10 +11,9 @@
             {{ post.description }}
         </div>
         <div class="post__btns">
-            <my-button 
-                style='border-radius: 20px; padding: 6px 10px;' 
+            <my-button
                 class="button post__btns-delete" 
-                @click="deletePost"
+                @click.prevent="deletePost"
                 >X
             </my-button>
         </div>
@@ -33,7 +32,7 @@
             deletePost(){
                 this.$emit('delete', this.post.id)
             }
-        }
+        },
     }
 </script>
 
@@ -50,6 +49,11 @@
         background-color:azure;
         max-width: 300px;
         margin-bottom: 20px;
+
+        &:hover{
+            transition: 0.3s ease 0s;
+            background-color: rgb(228, 228, 81);
+        }
 
         &__btns{
             position: absolute;
