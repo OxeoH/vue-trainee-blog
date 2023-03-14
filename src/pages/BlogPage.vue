@@ -13,7 +13,7 @@
     <PostList :posts="sortedPosts" @delete="deletePost" v-if="!isPostsLoading"/>
     <h2 v-else style="text-align: center;">Posts are loading, wait please...</h2>
     
-    <div ref='observer' class="observer"></div>
+    <div v-intersection="loadMorePosts" class="observer"></div>
     <!-- <div class="pagination__wrapper">
         <div
             class="page"
@@ -53,7 +53,7 @@
                 ],
                 searchValue: '',
                 page: 1,
-                postsLimit: 12,
+                postsLimit: 18,
                 totalPages: 1
             }
         },
@@ -109,21 +109,6 @@
         },
         mounted(){
             this.fetchPosts()
-
-            const options ={
-                rootMargin: '0px',
-                threshold: 1.0
-            }
-
-            const callback = (entries, observer) =>{
-                if(entries[0].isIntersecting && this.page < this.totalPages){
-                    this.loadMorePosts()
-                }
-            }
-
-            const observer = new IntersectionObserver(callback, options)
-            observer.observe(this.$refs.observer)
-            
         },
         computed:{
             sortedPosts(){

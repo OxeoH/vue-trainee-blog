@@ -13,7 +13,7 @@
         <div class="post__btns">
             <my-button
                 class="button post__btns-delete" 
-                @click.prevent="deletePost"
+                @click.stop="deletePost"
                 >X
             </my-button>
         </div>
