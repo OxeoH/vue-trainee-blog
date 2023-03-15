@@ -1,39 +1,26 @@
 <template>
     <div class="wrapper">
             <my-button @click="showDialog">Create post</my-button>
-            <my-select v-model="selectedSort" :options="sortOptions"/>
-            <my-input v-model="searchValue" placeholder="Search by title"/>
+            <my-select :model-value="selectedSort" @update:model-value="setSort" :options="sortOptions"/>
+            <my-input :model-value="searchValue" @update:model-value="setSearch" placeholder="Search by title"/>
     </div>
     <my-dialog v-model:show="show" @show="hideDialog">
-        <PostForm @create="createPost"/>
+        <PostForm @create="this.addPost"/>
     </my-dialog>
 
     
     <h2 v-if="!posts.length && !isPostsLoading" style="text-align: center;">There are no posts yet</h2>
-    <PostList :posts="sortedPosts" @delete="deletePost" v-if="!isPostsLoading"/>
+    <PostList :posts="this.sortedPosts" @delete="this.deletePost" v-if="!isPostsLoading"/>
     <h2 v-else style="text-align: center;">Posts are loading, wait please...</h2>
     
-    <div v-intersection="loadMorePosts" class="observer"></div>
-    <!-- <div class="pagination__wrapper">
-        <div
-            class="page"
-            @click="changeCurrentPage(pageNum)"
-            v-for="pageNum in totalPages" 
-            :key="pageNum"
-            :class="{
-                'active-page': page == pageNum
-            }"
-        >
-            {{ pageNum }}
-        </div>
-    </div> -->
+    <div v-intersection="this.loadMorePosts" class="observer"></div>
 </template>
 
 
 <script>
     import PostList from '@/components/PostList.vue'
     import PostForm from '@/components/PostForm.vue'
-    import axios from 'axios'
+    import {mapState, mapGetters, mapActions, mapMutations} from 'vuex'
 
     export default {
         components: {
@@ -43,89 +30,48 @@
 
         data(){
             return{
-                posts: [],
-                show: false,
-                isPostsLoading: true,
-                selectedSort: '',
-                sortOptions: [
-                    { name: 'By title', value: 'title'},
-                    { name: 'By description', value: 'description'}
-                ],
-                searchValue: '',
-                page: 1,
-                postsLimit: 18,
-                totalPages: 1
+                show: false
             }
         },
 
         methods: {
-            createPost(post){
-                this.posts.push(post)
-            },
-            deletePost(post){
-                this.posts = this.posts.filter(item => item.id !== post.id)
-            },
+            ...mapMutations({
+                setPage: 'post/setPage',
+                setSort: 'post/setSort',
+                setSearch: 'post/setSearch',
+                addPost: 'post/addPost',
+                deletePost: 'post/deletePost'
+            }),
+            ...mapActions({
+                fetchPosts: 'post/fetchPosts',
+                loadMorePosts: 'post/loadMorePosts'
+            }),
+            
             hideDialog(){
                 this.show = false
             },
             showDialog(){
                 this.show = true
-            },
-            async fetchPosts(){
-                try{
-                    const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
-                        params: {
-                            _page: this.page,
-                            _limit: this.postsLimit
-                        }
-                    })
-                    this.posts = response.data.map(post => post = {...post, description: post.body})
-                    this.isPostsLoading = false
-                    this.totalPages = Math.ceil(response.headers['x-total-count'] / this.postsLimit)
-                }catch(e){
-                    console.log(e);
-                }
-            },
-
-            async loadMorePosts(){
-                setTimeout(async () => {
-                    try{
-                        this.page += 1
-                        const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
-                            params: {
-                                _page: this.page,
-                                _limit: this.postsLimit
-                            }
-                        })
-                        this.posts = [...this.posts, ...response.data.map(post => post = {...post, description: post.body})]
-                    }catch(e){
-                        console.log(e);
-                    }
-                }, 200)
-            },
-            // changeCurrentPage(pageNum){
-            //     this.page = pageNum
-            // }
+            }
         },
         mounted(){
             this.fetchPosts()
         },
         computed:{
-            sortedPosts(){
-                return this.posts
-                    .filter(item => item.title.toLowerCase().includes(this.searchValue.toLowerCase()))
-                    .sort((post1, post2) => {
-                        return post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])})
-            }
+            ...mapState({
+                posts: state => state.post.posts,
+                isPostsLoading: state => state.post.isPostsLoading,
+                selectedSort: state => state.post.selectedSort,
+                sortOptions: state => state.post.sortOptions,
+                searchValue: state => state.post.searchValue,
+                page: state => state.post.page,
+                postsLimit: state => state.post.postsLimit,
+                totalPages: state => state.post.totalPages
+            }),
+            ...mapGetters({
+                sortedPosts: 'post/sortedPosts'
+            })
         },
-        //Same sort by watch
-        // watch:{
-        //     selectedSort(newValue){
-        //         this.posts.sort((post1, post2) => {
-        //             return post1[newValue]?.localeCompare(post2[newValue])
-        //         })
-        //     }
-        // }
     }
 </script>
 
